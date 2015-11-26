@@ -2,8 +2,12 @@
 
 ## Objectives
 
-1. Objective 1
-2. Objective 2.
+1. Construct a nested params hash with data about the primary object and a belongs to and has many association.
+2. Use the conventional key names for associated data (assoication_attributes).
+3. Name form inputs correctly to create a nested params hash with belongs to and has many associated data.
+4. Define a conventional association writer for the primary model to properly instantiated associations based on the nested params association data.
+5. Define a custom association writer for the primary model to properly instantiated associations with custom logic (like unique by name) on the nested params association data.
+5. Use fields_for to generate the association fields.
 
 ## Notes
 
@@ -108,15 +112,16 @@ notice that it automatically uses addresses_attributes as the scoping? why? only
 
 comment out addresses_attributes= and reload form and see the different naming convention fields_for will use (which is rarely what we want when it comes to associations)
 
-now that we know that addressess_attributes= and fields_for are both required for a form with nested attributes for an assocation, there is also a macro to automatically build that vanilla standard implementation of the nested attribtues association writer, accepts_nested_attributes_for. All that macro does is implement that method.
+now that we know that addressess_attributes= and fields_for are both required for a form with nested attributes for an assocation, there is also a macro to automatically build that vanilla standard implementation of the nested attribtues association writer, accepts_nested_attributes_for. All that macro does is implement that method. link to accepts_nested_attributes and source code.
 
-it's common to build you own version of that method. for example.
+it's common to build you own version of that method.
 
-Artists#songs
+let's look at how we might use fields_for with a custom attributes writer but instead of writing to a has_many as in the case with a person form and multiple addresses, let's explore writing to a belongs to.
 
-say we wanted to do the saem thing, when you create an artists you can add songs. songs belong to genres. genres should be found_or_create_by_name our form needs
+Song#artist_attributes=
 
-artists[songs_attributes][][name]
-artists[songs_attributes][][genre_name]
+Artists are unique. If we create two songs by Michael Jackson, we want them to be linked to the same artist instance. if we use accepts_nested_attributes_for :artist on Song even if you type in the same name of the artist you will create two instances that represent the same unique (canonical) piece of data - there is one and only one Michael Jackson.
 
- but the writer for genres_attributes= that the standard accepts_nested_attributes_for would generate would not find our create but rather always build a new genre (creating duplicate). in this situation, you can implement songs_attributes= to implement the custom find_or_create_by genre (but you could also immplement genre_name= on song to hand that as artists#songs_attributes= delegates to the mass assignment of song.)
+show example of this via screen shots or logs or gif but show them how the normal writer of artist_attributes for the Song belongs_to artist will create duplicate data.
+
+So we define our own artist_attributes= and use find_or_create_by for the artist name. Once we define that, fields_for will still work and we have a custom nested attribute writer.
