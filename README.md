@@ -125,3 +125,5 @@ Artists are unique. If we create two songs by Michael Jackson, we want them to b
 show example of this via screen shots or logs or gif but show them how the normal writer of artist_attributes for the Song belongs_to artist will create duplicate data.
 
 So we define our own artist_attributes= and use find_or_create_by for the artist name. Once we define that, fields_for will still work and we have a custom nested attribute writer.
+
+<a href='https://learn.co/lessons/basic-nested-forms' data-visibility='hidden'>View this lesson on Learn.co</a>
