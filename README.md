@@ -9,121 +9,193 @@
 5. Define a custom association writer for the primary model to properly instantiated associations with custom logic (like unique by name) on the nested params association data.
 5. Use fields_for to generate the association fields.
 
-## Notes
+## Data model
 
-We covered single object forms and we covered some more complex forms that write to association data through custom writers on a single model.
+Let's say we're writing an address book.
 
-Let's take the idea of a form that can write to more than one model a bit further.
+Each Person can have multiple addresses. Addresses are have a bunch of address info fields.
 
-Consider a person with multiple addresses, such as a shipping and billing address.
+Our data model looks like this:
 
-When the person signs up for your site, you might want them to be able to add more than one address to their account
+  * Person
+    * a person has many addresses
+    * person.name: string
+  * Address
+    * an address has one person
+    * address.street_address_1: string
+    * address.street_address_2: string
+    * address.city: string
+    * address.zipcode: string
+    * address.address_type: string
 
-what's the relationship? A person has many addresses
+## Creating people
 
-we might think we could build this form with person[addresses_info][] writing to a method on Person#addresses_info. But the problem is that addresses don't have singular data - an address has different parts, it isn't a simple as a single field in an address. an address is generally composed of:
+How do we write our Person form? We don't want to require our user to first create an address, then create that person. That's annoying. We want a single form for a Person containing several slots for addresses.
 
-street_address_1
-street_address_2
-city
-state
-zipcode
-address_type (billing or shipping)
+Previously, we wrote setters like `Song#artist_name=` to find or create an Artist and connect them to the song.
 
-So for each address a person adds, we need to be able to write five fields into that address. How can we do this?
+That won't work here, because an address contains more than one field. In the `Artist` case we were just doing the `name`. With `Address` it's "structured data". All that really means is it has multiple fields attached to it. When we build a form
+for it, the form will send a different key for each field in each address. This can get a bit unwieldy so we generally try to group a hash with in the params hash. Makes things much neater. Spoiler: Rails has a way to send this across as a hash.
 
-we know that params can be nested to form a structured hash. ideally, we'd love the form to create a params hash that looks something like
+The complete `params` object for creating a person will look like the following. Using "0" and "1" as keys can seem a bit odd, but it makes everything else work moving forward. In the end with keys like `"0"` and one. This hash is now more versatile. You can use it like an array by just doing `params[:addresses_attributes][0.to_s]` or like a normal hash.
 
+```
 {
   :person => {
     :name => "Avi",
     :email => "avi@flombaum.com",
-    :addresses_attributes => [
-      {
+    :addresses_attributes => {
+      "0" => {
         :street_address_1 => "33 West 26th St",
         :street_address_2 => "Apt 2B",
         :city => "New York",
         :state => "NY",
         :zipcode => "10010",
-        :address_type => "Billing"
+        :address_type => "Work"
       },
-      {
+      "1" => {
         :street_address_1 => "11 Broadway",
         :street_address_2 => "2nd Floor",
         :city => "New York",
         :state => "NY",
         :zipcode => "10004",
-        :address_type => "Shipping"
+        :address_type => "Home"
       }    
-    ]
+    }
   }
 }
+```
 
-The structure of the hash groups all the related data together. We can easily see that there is a person with 2 scalar  values (simple singular string based values) , name and email, and a complex properties of addresses_attributes that is an array where each inner hash is the individual address properties.
+Notice the `address_attributes` key. That key, is similar to our `artist_name` key that we had before. Last time we handled this by writing a `artist_name=` method. In this case we are going to do something *super* similar. This time though! Instead of writing our own `addresses_attributes` method, we are going to let Rails take care of it for us. We are going to use `accepts_nested_attributes_for` and the `fields_for` FormHelper. 
 
-So that would be the form data we want. the two questions are how to build a form structured like this through rails form helpers (we could always drop down to HTML with fields like
-
-<input name="person[addresses_attributes][0][:street_address_1]">
-<input name="person[addresses_attributes][0][:street_address_2]">
-
-but that's pretty verbose and un-railsy.
-
-And then once we figure out the rails way to build this form with nested association data for the main object, @person, what do we do in the controller action or model to get that complex hash to actually create the correct instances, rows, and data.
-
-let's start with the controller/action and model.
-
-besides strong params we don't want to modify the contorller to much. Ideally, we'd love to still mass assign params[:person] to Person.new and have it just work. we know mass assignment is a fancy pattern for calling writer methods based on the keys in the hash with the argument being the values from the hash. If we look at the top level person keys, we see name, email, and addresses_attributes. We have a name= and an email= from AR, so we just need to build an addresses_attributes= method that can accept an array of hashes and for each hash, just build an associated address for the person. how might that method look?
-
+Last time, we first wrote our setter method in the model. This time let's modify our `Person` model to `accept_nested_attributes_for :addresses`
 
 ```ruby
-def addresses_attributes=(addresses)
-  # addresses is an array of hashes
-  # for each address hash, we need to build an address
-  addresses.each do |address_hash|
-    # now address_hash is a hash with the data only relating to an address
-    # {:street_address_1 =>, street_address_2 =>, :city => , etc}
-    # we need to build an associated address for the current person, self.
-    # we can use the association collection builder to make a new address
-    # because the address_ hash is a perfect attribute hash we can mass assign it
-    self.addresses.build(address_hash)
+class Person < ActiveRecord::Base
+  has_many :addresses
+  accepts_nested_attributes_for :addresses
+
+end
+```
+
+Now open up `rails c` and run our `addresses_attributes` method that was created for us by `accept_nested_attributes_for`.
+
+```ruby
+2.2.3 :018 > new_person = Person.new
+ => #<Person id: nil, name: nil, created_at: nil, updated_at: nil>
+
+2.2.3 :019 > new_person.addresses_attributes={"0"=>{"street_address_1"=>"33 West 26", "street_address_2"=>"Floor 2", "city"=>"NYC", "state"=>"NY", "zipcode"=>"10004", "address_type"=>"work1"}, "1"=>{"street_address_1"=>"11 Broadway", "street_address_2"=>"Suite 260", "city"=>"NYC", "state"=>"NY", "zipcode"=>"10004", "address_type"=>"work2"}}
+ => {"0"=>{"street_address_1"=>"33 West 26", "street_address_2"=>"Floor 2", "city"=>"NYC", "state"=>"NY", "zipcode"=>"10004", "address_type"=>"work1"}, "1"=>{"street_address_1"=>"11 Broadway", "street_address_2"=>"Suite 260", "city"=>"NYC", "state"=>"NY", "zipcode"=>"10004", "address_type"=>"work2"}}
+
+2.2.3 :020 > new_person.save
+   (0.2ms)  begin transaction
+  SQL (0.8ms)  INSERT INTO "people" ("created_at", "updated_at") VALUES (?, ?)  [["created_at", "2016-01-14 11:57:00.393038"], ["updated_at", "2016-01-14 11:57:00.393038"]]
+  SQL (0.3ms)  INSERT INTO "addresses" ("street_address_1", "street_address_2", "city", "state", "zipcode", "address_type", "person_id", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)  [["street_address_1", "33 West 26"], ["street_address_2", "Floor 2"], ["city", "NYC"], ["state", "NY"], ["zipcode", "10004"], ["address_type", "work1"], ["person_id", 3], ["created_at", "2016-01-14 11:57:00.403152"], ["updated_at", "2016-01-14 11:57:00.403152"]]
+  SQL (0.1ms)  INSERT INTO "addresses" ("street_address_1", "street_address_2", "city", "state", "zipcode", "address_type", "person_id", "created_at", "updated_at") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)  [["street_address_1", "11 Broadway"], ["street_address_2", "Suite 260"], ["city", "NYC"], ["state", "NY"], ["zipcode", "10004"], ["address_type", "work2"], ["person_id", 3], ["created_at", "2016-01-14 11:57:00.405973"], ["updated_at", "2016-01-14 11:57:00.405973"]]
+   (0.6ms)  commit transaction
+```
+
+This is a bit hard to read, but you'll notice that we have a method called `addresses_attributes=`. You didn't write that, `accepts_nested_attributes_for` wrote that. Then when we called `new_person.save` it created both the `Person` object and the two `Address` objects. Boom!
+
+Now, we just need to get our form to create a `params` hash like that. Easy Peasy. We are going to use `fields_for` to make this happen.
+
+```ruby
+# app/views/person/form.html.erb
+<%= form_for @person do |f| %>
+  <%= f.text_field :name %>
+  <%= f.fields_for :addresses do |addr| %>
+    <%= addr.label :street_address_1 %>
+    <%= addr.text_field :street_address_1 %><br />
+
+    <%= addr.label :street_address_2 %>
+    <%= addr.text_field :street_address_2 %><br />
+
+    <%= addr.label :city %>
+    <%= addr.text_field :city %><br />
+
+    <%= addr.label :state %>
+    <%= addr.text_field :state %><br />
+
+    <%= addr.label :zipcoode %>
+    <%= addr.text_field :zipcode %><br />
+
+    <%= addr.label :address_type %>
+   <%= addr.text_field :address_type %><br />
+ <% end %>
+<% end %>
+```
+
+The `field_for` line gives something nice and english-y. In that block are the fields for the addresses. Love Rails.
+
+Load the page up and see the majestic beauty of what you and Rails have written together. What!!!! Nothing is there.
+
+
+## Creating stubs
+
+We're asking rails to generate `fields_for` each of the Person's addresses. But
+when we're first creating a Person, they have no addresses. Just like  `f.text_field :name` will have nothing in the text field if there is no name, `f.fields_for :addresses` will have no addresses fields if there are no addresses.
+
+We'll take the most straightforward way out: when we create a Person in the
+PeopleController, we'll add two empty addresses to fill out. The final controller
+looks like this:
+
+```
+class PeopleController < ApplicationController
+  def new
+    @person = Person.new
+    @person.addresses.build(address_type: 'work')
+    @person.addresses.build(address_type: 'home')
+  end
+
+  def create    
+    redirect_to Person.create(person_params)
+  end
+
+  private
+
+  def person_params
+    params.require(:person).permit(:name)
   end
 end
 ```
 
-That's it, pretty simple. Because the person is the parent data, when the controller saves the person, all the assoicated unsaved addresses will be saved automatically.
+Now, refresh the page and you'll see two lovely address forms. Try and hit submit and it isn't going to work. One last hurdle. We have new param keys, which means we need to modify our `person_params` method to accept them. Your new `person_params` should now look like this:
 
-So the writer turned out to not be that complex. Let's look at how we might build the form to create the params[:person] hash structure we defined above.
+```ruby
+  def person_params
+    params.require(:person).permit(:name, addresses_attributes: 
+                                   [:street_address_1, :street_address_2, :city, :state, :zipcode, :address_type])
+  end
+```
 
-the macro we're going to use is fields_for
 
-explain how fields_for works - it will create a new scoping for form fields yielding a new form builder attached to an association instead of the main object.
+## Avoiding duplicates
 
-once you have a fields for the form builder will build form fields for the associated object scoped by the parent object.
+One situation we can't use `accepts_nested_attributes_for` is when we want to
+avoid duplicates of the row we're creating.
 
-show them the correct fields_for then show them the person/new page and show that there are no address fields. Why not? we're saying fields for an association but this brand new instantiate person doesn't have an address so how can we generate fields for it? in the same way we stub a person instance for the form to wrap around we need to give that person instnace addresses for fields for to wrap around
+In our address book app, perhaps it's reasonable to have duplicate address rows.
+Like, both Jerry and Tim live on 22 Elm Street, so there are two address rows
+for 22 Elm Street. That's fine for those purposes.
 
-in PersonsController#new when we do @person = Person.new, we should also add two empty addresses for shipping and billing if thats what we want.
+But say we had a database of Songs and Artists. We would want Artist rows to be
+unique, so that `Artist.find_by(name: 'Tori Amos').songs` returns what we'd expect.
+If we want to be able to create Artists while creating Songs, we'll need to use
+`find_or_create_by` in our `artist_attributes=` method:
 
-let's reload the form
+```ruby
+# app/models/song.rb
+class Song < ActiveRecord::Base
+  def artist_attributes=(artist)
+    self.artist = Artist.find_or_create_by(name: artist.name)
+    self.artist.update(artist)
+  end
+end
+```
 
-inspect the naming conventions
-
-notice that it automatically uses addresses_attributes as the scoping? why? only because we built that method. without the underlying Person model implementing the logic to accept the nested attributes for addresses, the fields for helper won't correct wrap that method.
-
-comment out addresses_attributes= and reload form and see the different naming convention fields_for will use (which is rarely what we want when it comes to associations)
-
-now that we know that addressess_attributes= and fields_for are both required for a form with nested attributes for an assocation, there is also a macro to automatically build that vanilla standard implementation of the nested attribtues association writer, accepts_nested_attributes_for. All that macro does is implement that method. link to accepts_nested_attributes and source code.
-
-it's common to build you own version of that method.
-
-let's look at how we might use fields_for with a custom attributes writer but instead of writing to a has_many as in the case with a person form and multiple addresses, let's explore writing to a belongs to.
-
-Song#artist_attributes=
-
-Artists are unique. If we create two songs by Michael Jackson, we want them to be linked to the same artist instance. if we use accepts_nested_attributes_for :artist on Song even if you type in the same name of the artist you will create two instances that represent the same unique (canonical) piece of data - there is one and only one Michael Jackson.
-
-show example of this via screen shots or logs or gif but show them how the normal writer of artist_attributes for the Song belongs_to artist will create duplicate data.
-
-So we define our own artist_attributes= and use find_or_create_by for the artist name. Once we define that, fields_for will still work and we have a custom nested attribute writer.
+This looks up existing Artists by name. If it doesn't exist, one is created.
+Then we update at artist's attributes with the ones we were given. We could choose
+to do something else, if we didn't want to allow bulk assigning of an artist's
+information through a song.
 
 <a href='https://learn.co/lessons/basic-nested-forms' data-visibility='hidden'>View this lesson on Learn.co</a>
