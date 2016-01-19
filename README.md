@@ -194,7 +194,7 @@ end
 ```
 
 This looks up existing Artists by name. If it doesn't exist, one is created.
-Then we update at artist's attributes with the ones we were given. We could choose
+Then we update an artist's attributes with the ones we were given. We could choose
 to do something else, if we didn't want to allow bulk assigning of an artist's
 information through a song.
 
