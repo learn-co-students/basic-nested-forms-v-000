@@ -35,7 +35,7 @@ How do we write our Person form? We don't want to require our user to first crea
 Previously, we wrote setters like `Song#artist_name=` to find or create an Artist and connect them to the song.
 
 That won't work here, because an address contains more than one field. In the `Artist` case we were just doing the `name`. With `Address` it's "structured data". All that really means is it has multiple fields attached to it. When we build a form
-for it, the form will send a different key for each field in each address. This can get a bit unwieldy so we generally try to group a hash with in the params hash. Makes things much neater. Spoiler: Rails has a way to send this across as a hash.
+for it, the form will send a different key for each field in each address. This can get a bit unwieldy so we generally try to group a hash within the params hash – makes things much neater. Spoiler: Rails has a way to send this across as a hash.
 
 The complete `params` object for creating a person will look like the following. Using "0" and "1" as keys can seem a bit odd, but it makes everything else work moving forward. This hash is now more versatile. You can use it like an array by just doing `params[:addresses_attributes][0.to_s]` or like a normal hash.
 
