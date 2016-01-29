@@ -198,4 +198,4 @@ Then we update an artist's attributes with the ones we were given. We could choo
 to do something else, if we didn't want to allow bulk assigning of an artist's
 information through a song.
 
-<a href='https://learn.co/lessons/basic-nested-forms' data-visibility='hidden'>View this lesson on Learn.co</a>
+<p data-visibility='hidden'>View <a href='https://learn.co/lessons/basic-nested-forms' title='Basic Nested Forms'>Basic Nested Forms</a> on Learn.co and start learning to code for free.</p>
