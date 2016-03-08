@@ -125,7 +125,7 @@ Now, we just need to get our form to create a `params` hash like that. Easy Peas
 <% end %>
 ```
 
-The `field_for` line gives something nice and english-y. In that block are the fields for the addresses. Love Rails.
+The `fields_for` line gives something nice and english-y. In that block are the fields for the addresses. Love Rails.
 
 Load the page up and see the majestic beauty of what you and Rails have written together. What!!!! Nothing is there.
 
@@ -148,7 +148,8 @@ class PeopleController < ApplicationController
   end
 
   def create    
-    redirect_to Person.create(person_params)
+		@person = Person.create(person_params)
+    redirect_to people_path(@person)
   end
 
   private
@@ -199,3 +200,5 @@ to do something else, if we didn't want to allow bulk assigning of an artist's
 information through a song.
 
 <p data-visibility='hidden'>View <a href='https://learn.co/lessons/basic-nested-forms' title='Basic Nested Forms'>Basic Nested Forms</a> on Learn.co and start learning to code for free.</p>
+
+<p data-visibility='hidden'>View <a href='https://learn.co/lessons/basic-nested-forms'>Basic Nested Forms</a> on Learn.co and start learning to code for free.</p>
