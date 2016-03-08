@@ -3,7 +3,7 @@
 ## Objectives
 
 1. Construct a nested params hash with data about the primary object and a belongs to and has many association.
-2. Use the conventional key names for associated data (assoication_attributes).
+2. Use the conventional key names for associated data (association_attributes).
 3. Name form inputs correctly to create a nested params hash with belongs to and has many associated data.
 4. Define a conventional association writer for the primary model to properly instantiate associations based on the nested params association data.
 5. Define a custom association writer for the primary model to properly instantiate associations with custom logic (like unique by name) on the nested params association data.
@@ -199,3 +199,5 @@ to do something else, if we didn't want to allow bulk assigning of an artist's
 information through a song.
 
 <p data-visibility='hidden'>View <a href='https://learn.co/lessons/basic-nested-forms' title='Basic Nested Forms'>Basic Nested Forms</a> on Learn.co and start learning to code for free.</p>
+
+<p data-visibility='hidden'>View <a href='https://learn.co/lessons/basic-nested-forms'>Basic Nested Forms</a> on Learn.co and start learning to code for free.</p>
