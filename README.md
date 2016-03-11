@@ -125,7 +125,7 @@ Now, we just need to get our form to create a `params` hash like that. Easy Peas
 <% end %>
 ```
 
-The `field_for` line gives something nice and english-y. In that block are the fields for the addresses. Love Rails.
+The `fields_for` line gives something nice and english-y. In that block are the fields for the addresses. Love Rails.
 
 Load the page up and see the majestic beauty of what you and Rails have written together. What!!!! Nothing is there.
 
@@ -148,7 +148,8 @@ class PeopleController < ApplicationController
   end
 
   def create    
-    redirect_to Person.create(person_params)
+		@person = Person.create(person_params)
+    redirect_to people_path(@person)
   end
 
   private
