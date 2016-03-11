@@ -66,7 +66,7 @@ The complete `params` object for creating a person will look like the following.
 }
 ```
 
-Notice the `address_attributes` key. That key, is similar to our `artist_name` key that we had before. Last time we handled this by writing a `artist_name=` method. In this case we are going to do something *super* similar. This time though! Instead of writing our own `addresses_attributes` method, we are going to let Rails take care of it for us. We are going to use `accepts_nested_attributes_for` and the `fields_for` FormHelper. 
+Notice the `address_attributes` key. That key, is similar to our `artist_name` key that we had before. Last time we handled this by writing a `artist_name=` method. In this case we are going to do something *super* similar. This time though! Instead of writing our own `addresses_attributes` method, we are going to let Rails take care of it for us. We are going to use `accepts_nested_attributes_for` and the `fields_for` FormHelper.
 
 Last time, we first wrote our setter method in the model. This time let's modify our `Person` model to `accept_nested_attributes_for :addresses`
 
@@ -148,7 +148,7 @@ class PeopleController < ApplicationController
   end
 
   def create    
-		@person = Person.create(person_params)
+    @person = Person.create(person_params)
     redirect_to people_path(@person)
   end
 
@@ -164,8 +164,17 @@ Now, refresh the page and you'll see two lovely address forms. Try and hit submi
 
 ```ruby
   def person_params
-    params.require(:person).permit(:name, addresses_attributes: 
-                                   [:street_address_1, :street_address_2, :city, :state, :zipcode, :address_type])
+    params.require(:person).permit(
+      :name,
+      addresses_attributes: [
+        :street_address_1,
+        :street_address_2,
+        :city,
+        :state,
+        :zipcode,
+        :address_type
+      ]
+    )
   end
 ```
 
