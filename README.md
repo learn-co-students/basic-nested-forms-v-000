@@ -68,7 +68,7 @@ The complete `params` object for creating a person will look like the following.
 
 Notice the `address_attributes` key. That key, is similar to our `artist_name` key that we had before. Last time we handled this by writing a `artist_name=` method. In this case we are going to do something *super* similar. This time though! Instead of writing our own `addresses_attributes` method, we are going to let Rails take care of it for us. We are going to use `accepts_nested_attributes_for` and the `fields_for` FormHelper.
 
-Last time, we first wrote our setter method in the model. This time let's modify our `Person` model to `accept_nested_attributes_for :addresses`
+Last time, we first wrote our setter method in the model. This time let's modify our `Person` model to `accepts_nested_attributes_for :addresses`
 
 ```ruby
 class Person < ActiveRecord::Base
@@ -78,7 +78,7 @@ class Person < ActiveRecord::Base
 end
 ```
 
-Now open up `rails c` and run our `addresses_attributes` method that was created for us by `accept_nested_attributes_for`.
+Now open up `rails c` and run our `addresses_attributes` method that was created for us by `accepts_nested_attributes_for`.
 
 ```ruby
 2.2.3 :018 > new_person = Person.new
@@ -207,6 +207,13 @@ This looks up existing Artists by name. If it doesn't exist, one is created.
 Then we update an artist's attributes with the ones we were given. We could choose
 to do something else, if we didn't want to allow bulk assigning of an artist's
 information through a song.
+
+Note that `accepts_nested_attributes_for` and setter methods (e.g.,
+`artist_attributes=`) aren't necessarily mutually exclusive. It's important to
+evaluate the needs of your specific use case and to choose the approach that
+makes the most sense. Keep in mind, too, that setter methods are useful for
+more than just avoiding duplicates — that's just one domain where they come in
+handy.
 
 <p data-visibility='hidden'>View <a href='https://learn.co/lessons/basic-nested-forms' title='Basic Nested Forms'>Basic Nested Forms</a> on Learn.co and start learning to code for free.</p>
 
