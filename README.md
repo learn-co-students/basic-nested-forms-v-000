@@ -116,7 +116,7 @@ Now, we just need to get our form to create a `params` hash like that. Easy Peas
     <%= addr.label :state %>
     <%= addr.text_field :state %><br />
 
-    <%= addr.label :zipcoode %>
+    <%= addr.label :zipcode %>
     <%= addr.text_field :zipcode %><br />
 
     <%= addr.label :address_type %>
@@ -218,3 +218,5 @@ handy.
 <p data-visibility='hidden'>View <a href='https://learn.co/lessons/basic-nested-forms' title='Basic Nested Forms'>Basic Nested Forms</a> on Learn.co and start learning to code for free.</p>
 
 <p data-visibility='hidden'>View <a href='https://learn.co/lessons/basic-nested-forms'>Basic Nested Forms</a> on Learn.co and start learning to code for free.</p>
+
+<p class='util--hide'>View <a href='https://learn.co/lessons/basic-nested-forms'>Basic Nested Forms</a> on Learn.co and start learning to code for free.</p>
