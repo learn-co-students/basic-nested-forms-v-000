@@ -60,7 +60,7 @@ The complete `params` object for creating a person will look like the following.
         :state => "NY",
         :zipcode => "10004",
         :address_type => "Home"
-      }    
+      }
     }
   }
 }
@@ -147,7 +147,7 @@ class PeopleController < ApplicationController
     @person.addresses.build(address_type: 'home')
   end
 
-  def create    
+  def create
     @person = Person.create(person_params)
     redirect_to people_path(@person)
   end
@@ -181,17 +181,11 @@ Now, refresh the page and you'll see two lovely address forms. Try and hit submi
 
 ## Avoiding duplicates
 
-One situation we can't use `accepts_nested_attributes_for` is when we want to
-avoid duplicates of the row we're creating.
+One situation we can't use `accepts_nested_attributes_for` is when we want to avoid duplicates of the row we're creating.
 
-In our address book app, perhaps it's reasonable to have duplicate address rows.
-Like, both Jerry and Tim live on 22 Elm Street, so there are two address rows
-for 22 Elm Street. That's fine for those purposes.
+In our address book app, perhaps it's reasonable to have duplicate address rows. Like, both Jerry and Tim live on 22 Elm Street, so there are two address rows for 22 Elm Street. That's fine for those purposes.
 
-But say we had a database of Songs and Artists. We would want Artist rows to be
-unique, so that `Artist.find_by(name: 'Tori Amos').songs` returns what we'd expect.
-If we want to be able to create Artists while creating Songs, we'll need to use
-`find_or_create_by` in our `artist_attributes=` method:
+But say we had a database of Songs and Artists. We would want Artist rows to be unique, so that `Artist.find_by(name: 'Tori Amos').songs` returns what we'd expect. If we want to be able to create Artists while creating Songs, we'll need to use `find_or_create_by` in our `artist_attributes=` method:
 
 ```ruby
 # app/models/song.rb
@@ -203,20 +197,8 @@ class Song < ActiveRecord::Base
 end
 ```
 
-This looks up existing Artists by name. If it doesn't exist, one is created.
-Then we update an artist's attributes with the ones we were given. We could choose
-to do something else, if we didn't want to allow bulk assigning of an artist's
-information through a song.
+This looks up existing Artists by name. If it doesn't exist, one is created. Then we update an artist's attributes with the ones we were given. We could choose to do something else, if we didn't want to allow bulk assigning of an artist's information through a song.
 
-Note that `accepts_nested_attributes_for` and setter methods (e.g.,
-`artist_attributes=`) aren't necessarily mutually exclusive. It's important to
-evaluate the needs of your specific use case and to choose the approach that
-makes the most sense. Keep in mind, too, that setter methods are useful for
-more than just avoiding duplicates — that's just one domain where they come in
-handy.
-
-<p data-visibility='hidden'>View <a href='https://learn.co/lessons/basic-nested-forms' title='Basic Nested Forms'>Basic Nested Forms</a> on Learn.co and start learning to code for free.</p>
-
-<p data-visibility='hidden'>View <a href='https://learn.co/lessons/basic-nested-forms'>Basic Nested Forms</a> on Learn.co and start learning to code for free.</p>
+Note that `accepts_nested_attributes_for` and setter methods (e.g., `artist_attributes=`) aren't necessarily mutually exclusive. It's important to evaluate the needs of your specific use case and to choose the approach that makes the most sense. Keep in mind, too, that setter methods are useful for more than just avoiding duplicates — that's just one domain where they come in handy.
 
 <p class='util--hide'>View <a href='https://learn.co/lessons/basic-nested-forms'>Basic Nested Forms</a> on Learn.co and start learning to code for free.</p>
