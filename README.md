@@ -100,7 +100,7 @@ This is a bit hard to read, but you'll notice that we have a method called `addr
 Now, we just need to get our form to create a `params` hash like that. Easy Peasy. We are going to use `fields_for` to make this happen.
 
 ```ruby
-# app/views/person/form.html.erb
+# app/views/people/form.html.erb
 <%= form_for @person do |f| %>
   <%= f.text_field :name %>
   <%= f.fields_for :addresses do |addr| %>
