@@ -201,4 +201,8 @@ This looks up existing Artists by name. If it doesn't exist, one is created. The
 
 Note that `accepts_nested_attributes_for` and setter methods (e.g., `artist_attributes=`) aren't necessarily mutually exclusive. It's important to evaluate the needs of your specific use case and to choose the approach that makes the most sense. Keep in mind, too, that setter methods are useful for more than just avoiding duplicates — that's just one domain where they come in handy.
 
+## Video Review 
+
+* [Nested Forms](https://github.com/learn-co-curriculum/rails-video-review-deep-dive-into-nested-forms) 
+
 <p class='util--hide'>View <a href='https://learn.co/lessons/basic-nested-forms'>Basic Nested Forms</a> on Learn.co and start learning to code for free.</p>
