@@ -203,6 +203,6 @@ Note that `accepts_nested_attributes_for` and setter methods (e.g., `artist_attr
 
 ## Video Review 
 
-* [Nested Forms](https://github.com/learn-co-curriculum/rails-video-review-deep-dive-into-nested-forms) 
+* [Nested Forms](https://www.youtube.com/watch?v=zZn0xWry6TE) 
 
 <p class='util--hide'>View <a href='https://learn.co/lessons/basic-nested-forms'>Basic Nested Forms</a> on Learn.co and start learning to code for free.</p>
