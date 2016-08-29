@@ -100,28 +100,33 @@ This is a bit hard to read, but you'll notice that we have a method called `addr
 Now, we just need to get our form to create a `params` hash like that. Easy Peasy. We are going to use `fields_for` to make this happen.
 
 ```erb
-# app/views/people/form.html.erb
+# app/views/people/new.html.erb
+
 <%= form_for @person do |f| %>
-  <%= f.text_field :name %>
+  <%= f.label :name %>
+  <%= f.text_field :name %><br>
+
   <%= f.fields_for :addresses do |addr| %>
     <%= addr.label :street_address_1 %>
-    <%= addr.text_field :street_address_1 %><br />
+    <%= addr.text_field :street_address_1 %><br>
 
     <%= addr.label :street_address_2 %>
-    <%= addr.text_field :street_address_2 %><br />
+    <%= addr.text_field :street_address_2 %><br>
 
     <%= addr.label :city %>
-    <%= addr.text_field :city %><br />
+    <%= addr.text_field :city %><br>
 
     <%= addr.label :state %>
-    <%= addr.text_field :state %><br />
+    <%= addr.text_field :state %><br>
 
     <%= addr.label :zipcode %>
-    <%= addr.text_field :zipcode %><br />
+    <%= addr.text_field :zipcode %><br>
 
     <%= addr.label :address_type %>
-   <%= addr.text_field :address_type %><br />
- <% end %>
+    <%= addr.text_field :address_type %><br>
+  <% end %>
+
+  <%= f.submit %>
 <% end %>
 ```
 
@@ -145,8 +150,12 @@ class PeopleController < ApplicationController
   end
 
   def create
-    @person = Person.create(person_params)
-    redirect_to people_path(@person)
+    person = Person.create(person_params)
+    redirect_to people_path
+  end
+  
+  def index
+    @people = Person.all
   end
 
   private
