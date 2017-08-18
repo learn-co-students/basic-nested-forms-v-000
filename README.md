@@ -42,7 +42,6 @@ The complete `params` object for creating a `Person` will look like the followin
 {
   :person => {
     :name => "Avi",
-    :email => "avi@flombaum.com",
     :addresses_attributes => {
       "0" => {
         :street_address_1 => "33 West 26th St",
