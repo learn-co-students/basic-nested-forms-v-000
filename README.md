@@ -25,6 +25,7 @@ Our data model looks like this:
     * has the first line of the street address stored as `street_address_1` (string)
     * has the second line of the street address stored as `street_address_2` (string)
     * has a `city` (string)
+    * has a `state` (string)
     * has a `zipcode` (string)
     * has an `address_type` (string)
 
