@@ -3,10 +3,13 @@ class PeopleController < ApplicationController
     @person = Person.new
     @person.addresses.build(address_type: 'work')
     @person.addresses.build(address_type: 'home')
+    @person.kids.new
+    @person.kids.new
   end
 
   def create
-    Person.create(person_params)
+    @person = Person.new(person_params)
+    @person.save
     redirect_to people_path
   end
 
@@ -26,7 +29,13 @@ class PeopleController < ApplicationController
         :state,
         :zipcode,
         :address_type
+      ],
+      kids_attributes: [
+        :name,
+        :gender,
+        :age
       ]
     )
   end
+
 end

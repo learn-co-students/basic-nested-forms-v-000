@@ -4,7 +4,12 @@
   <h4><%= person.name %></h4>
   <ul>
     <% person.addresses.each do |address| %>
-      <li> <%= address.street_address_1 %> <%= address.city %>, <%= address.state %>
+      <li> <%= address.street_address_1 %> - <%= address.city %> - <%= address.state %>
     <% end %>
+  </ul>
+  <ul>
+    <%person.kids.each do |kid|%>
+      <li><%=kid.name%> - <%=kid.gender%> - <%=kid.age%></li>
+    <%end%>
   </ul>
 <% end %>
