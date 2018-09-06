@@ -136,7 +136,7 @@ Peasy. We are going to use `fields_for` to make this happen.
   <%= f.label :name %>
   <%= f.text_field :name %><br>
 
-  <%= fields_for :addresses do |addr| %>
+  <%= f.fields_for :addresses do |addr| %>
     <%= addr.label :street_address_1 %>
     <%= addr.text_field :street_address_1 %><br>
 
