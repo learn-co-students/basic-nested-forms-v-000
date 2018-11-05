@@ -4,7 +4,7 @@
  
   <%= f.fields_for :addresses do |addr| %>
     <fieldset>
-    <legend>Address</legend>
+    <legend><%= addr.object.address_type.split(" ").map{|word| word.capitalize}.join(" ") %></legend>
     <%= addr.label :street_address_1 %>
     <%= addr.text_field :street_address_1 %><br>
  
@@ -20,8 +20,6 @@
     <%= addr.label :zipcode %>
     <%= addr.text_field :zipcode %><br>
  
-    <%= addr.label :address_type %>
-    <%= addr.text_field :address_type %><br>
     </fieldset>
   <% end %>
  
