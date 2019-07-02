@@ -240,7 +240,7 @@ need to use `find_or_create_by` in our `artist_attributes=` method:
 
 class Song < ActiveRecord::Base
   def artist_attributes=(artist)
-    self.artist = Artist.find_or_create_by(name: artist.name)
+    self.artist = Artist.find_or_create_by(name: artist_info[:name])
     self.artist.update(artist)
   end
 end
