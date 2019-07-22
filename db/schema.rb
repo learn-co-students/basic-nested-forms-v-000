@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -10,6 +9,10 @@
 # you'll amass, the slower it'll run and the greater likelihood for issues).
 #
 # It's strongly recommended that you check this file into your version control system.
+
+#rails db:migrate made this
+#didn't used RAILS_ENV=test
+#so we want the tests to know about your table but when you run that command, the development environment (which includes the rails console) does not know about it
 
 ActiveRecord::Schema.define(version: 20160114112845) do
 
